@@ -20,26 +20,29 @@ class MovieBoxState extends State<MovieBox> {
           children: <Widget>[
             new Container(
               child: new FadeInImage(
-                fit: BoxFit.fill,
+                fit: BoxFit.fitHeight,
                 placeholder: new AssetImage("assets/loading.gif"),
                 image: new NetworkImage(
-                  widget.movie.poster
+                  widget.movie.getPosterUrl()
                 )
               ),
               height: 180.0,
               width: 140.0,
+              padding: new EdgeInsets.all(5.0),
             ),
-            new Container(
-            child: new Text("${widget.movie.title} (${widget.movie.year})",
-            style: new TextStyle(fontSize: 17.5)),
-            padding: new EdgeInsets.fromLTRB(10.0, 5.0, 10.0, 5.0),
+            new Expanded(
+              child: new Center(child: new Text(
+                  "${widget.movie.title} (${widget.movie.vote_average})",
+                  style: new TextStyle(fontSize: 12.5))
+              ),
             )
-          ]),
+          ]
+      ),
       color: Theme
           .of(context)
           .primaryColor
           .withOpacity(0.15),
-      height: 215.0,
+      height: 505.0,
       width: 140.0,
     );
   }
