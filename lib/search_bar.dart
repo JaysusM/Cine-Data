@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'searcher.dart';
-import 'movie.dart';
-import 'dart:convert';
 
 class SearchBar extends StatefulWidget {
   TextEditingController controller;

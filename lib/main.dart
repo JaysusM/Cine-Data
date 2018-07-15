@@ -16,8 +16,7 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
           brightness: Brightness.light,
           primaryColor: const Color(0xFF020122),
-          accentColor: const Color(0xFFff521b)
-      ),
+          accentColor: const Color(0xFFff521b)),
       routes: <String, WidgetBuilder>{
         "/search": (BuildContext context) => new SearchScreen()
       },
@@ -27,18 +26,26 @@ class MyApp extends StatelessWidget {
 }
 
 class MainScreen extends StatelessWidget {
+  Widget popularMovies;
+
+  MainScreen() {
+    popularMovies = new PopularMoviesWidget();
+  }
+
   Widget build(BuildContext context) {
     return new Scaffold(
-      drawer: new Drawer(),
-      appBar: new AppBar(
-        title: new Text("Popular Movies"),
-        actions: <Widget>[
-          new IconButton(icon: new Icon(Icons.search), onPressed: () {
-            Navigator.of(context).pushNamed("/search");
-          })
-        ],
-      ),
-      body: new PopularMoviesWidget(),
+        drawer: new Drawer(),
+        appBar: new AppBar(
+          title: new Text("Popular Movies"),
+          actions: <Widget>[
+            new IconButton(
+                icon: new Icon(Icons.search),
+                onPressed: () {
+                  Navigator.of(context).pushNamed("/search");
+                })
+          ],
+        ),
+        body: popularMovies
     );
   }
 }
@@ -54,34 +61,38 @@ class SearchScreenState extends State {
   List<Widget> movies;
   String titleFilter = "";
   bool isSearching = false;
+  bool isEmpty = true;
 
   SearchScreenState() {
     searchBar = new SearchBar();
     searcher = new Searcher();
     movies = new List();
     searchBar.controller.addListener(() async {
-      if(titleFilter != searchBar.controller.text) {
+      isEmpty = (searchBar.controller.text == "");
+
+      if (isEmpty) return;
+
+      if (titleFilter != searchBar.controller.text) {
         this.setState(() {
           titleFilter = searchBar.controller.text;
           isSearching = true;
         });
-        movies =
-            jsonDecode(
+        movies = jsonDecode(
                 await searcher.searchByTitle(titleFilter).whenComplete(() {
-                  this.setState(
-                          () {
-                        isSearching = false;
-                      }
-                  );
-                }
-                ))['results'].map<Widget>((movie) =>
-            new MovieBox(new Movie(movie))).toList();
+          this.setState(() {
+            isSearching = false;
+          });
+        }))['results']
+            .map<Widget>((movie) => new MovieBox(new Movie(movie)))
+            .toList();
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    Orientation orientation = MediaQuery.of(context).orientation;
+
     return new Scaffold(
       appBar: new AppBar(
         title: searchBar,
@@ -89,18 +100,42 @@ class SearchScreenState extends State {
           new IconButton(
               icon: new Icon(Icons.clear),
               onPressed: () {
-                searchBar.controller.clear();
+                this.setState(() {
+                  searchBar.controller.clear();
+                });
               })
         ],
       ),
-      body:
-        (!isSearching) ? new GridView.count(
-          crossAxisCount: 2,
-          crossAxisSpacing: 5.0,
-          mainAxisSpacing: 5.0,
-          children: movies
-      ) :
-        new Text("Searching movies, wait..."),
+      body: (!isEmpty)
+          ? (!isSearching)
+              ? new GridView.count(
+                  crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
+                  crossAxisSpacing: 5.0,
+                  mainAxisSpacing: 5.0,
+                  childAspectRatio: 0.7,
+                  children: movies,
+                )
+              : new Center(
+                  child: new Column(
+                  children: <Widget>[
+                    new Text("Searching movies...",
+                        style: new TextStyle(fontSize: 17.0)),
+                    new Image(image: new AssetImage("assets/loading.gif")),
+                  ],
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                ))
+          : new Column(
+              children: <Widget>[
+                new Image(image: new AssetImage("assets/search.png")),
+                new Text(
+                  "Type any keyword to search a movie",
+                  style: new TextStyle(fontSize: 20.0),
+                )
+              ],
+              crossAxisAlignment: CrossAxisAlignment.center,
+            ),
+      resizeToAvoidBottomPadding: false,
     );
   }
 }

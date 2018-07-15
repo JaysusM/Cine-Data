@@ -24,5 +24,4 @@ class Movie {
       adult = content["path"],
       overview = content["overview"],
       release_date = content["release_date"];
-
 }
