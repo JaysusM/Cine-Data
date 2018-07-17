@@ -1,8 +1,3 @@
-# cine_data
+# Cine-Data
 
-A new Flutter project.
-
-## Getting Started
-
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+Cine-Data is an android app movie database that was made with flutter and uses TMDB Api.
