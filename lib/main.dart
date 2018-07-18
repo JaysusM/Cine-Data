@@ -36,7 +36,7 @@ class MainScreen extends StatelessWidget {
     return new Scaffold(
         drawer: new Drawer(),
         appBar: new AppBar(
-          title: new Text("Popular Movies"),
+          title: new Text("Popular Movies", style: new TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Muli')),
           actions: <Widget>[
             new IconButton(
                 icon: new Icon(Icons.search),
@@ -130,7 +130,7 @@ class SearchScreenState extends State {
                 new Image(image: new AssetImage("assets/search.png")),
                 new Text(
                   "Type any keyword to search a movie",
-                  style: new TextStyle(fontSize: 20.0),
+                  style: new TextStyle(fontSize: 20.0, fontFamily: 'Muli', fontWeight: FontWeight.bold),
                 )
               ],
               crossAxisAlignment: CrossAxisAlignment.center,

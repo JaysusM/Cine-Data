@@ -4,12 +4,40 @@ import 'dart:convert';
 import 'movie.dart';
 import 'movie_box.dart';
 
-class PopularMoviesWidget extends StatelessWidget {
+class PopularMoviesWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => new PopularMoviesWidgetState();
+}
+
+class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
   Searcher searcher = new Searcher();
-  List<Widget> movies;
+  List<Movie> movies;
+  ScrollController controller = new ScrollController();
+  int pageCounter = 1;
+  bool isLoadingContent = false;
 
   Widget build(BuildContext context) {
     Orientation orientation = MediaQuery.of(context).orientation;
+    List<Movie> loadingContent;
+    double offset;
+    controller.addListener(() async {
+      if (controller.position.maxScrollExtent == controller.offset &&
+          !isLoadingContent) {
+        offset = controller.offset;
+        pageCounter++;
+        isLoadingContent = true;
+        await searcher.searchPopular(page: pageCounter).then((content) {
+            loadingContent = jsonDecode(content)['results']
+                .map<Movie>((movie) => new Movie(movie))
+                .toList();
+            isLoadingContent = false;
+        }).whenComplete(() {
+          this.setState((){
+            movies.addAll(loadingContent);
+            controller.jumpTo(offset);
+          });});
+      }
+    });
 
     return new Container(
       child: (movies == null)
@@ -36,8 +64,7 @@ class PopularMoviesWidget extends StatelessWidget {
                       return new Text("Error: ${response.error}");
                     else
                       movies = jsonDecode(response.data)['results']
-                          .map((movie) => new Movie(movie))
-                          .map<Widget>((movie) => new MovieBox(movie))
+                          .map<Movie>((movie) => new Movie(movie))
                           .toList();
                     return getGridView(movies, orientation);
                 }
@@ -47,16 +74,15 @@ class PopularMoviesWidget extends StatelessWidget {
       margin: new EdgeInsets.all(5.0),
     );
   }
-  
-  Widget getGridView(List<Widget> movies, Orientation orientation) {
+
+  Widget getGridView(List<Movie> movies, Orientation orientation) {
     return new GridView.count(
-      children: movies,
-      crossAxisCount:
-      (orientation == Orientation.portrait) ? 2 : 3,
+      children: movies.map((movie) => new MovieBox(movie)).toList(),
+      crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
       crossAxisSpacing: 8.0,
       mainAxisSpacing: 8.0,
       childAspectRatio: 0.7,
+      controller: controller,
     );
   }
-  
 }

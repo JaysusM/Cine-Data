@@ -25,6 +25,32 @@ flutter:
     - assets/loading.gif
     - assets/search.png
     - assets/loadingCircle.gif
+    - assets/Action.png
+    - assets/Adventure.png
+    - assets/Animation.png
+    - assets/Comedy.png
+    - assets/Crime.png
+    - assets/Documentary.png
+    - assets/Drama.png
+    - assets/Family.png
+    - assets/Fantasy.png
+    - assets/History.png
+    - assets/Horror.png
+    - assets/Music.png
+    - assets/Mystery.png
+    - assets/Romance.png
+    - assets/Science Fiction.png
+    - assets/Thriller.png
+    - assets/TV Movie.png
+    - assets/War.png
+    - assets/Western.png
+
+  fonts:
+    - family: Muli
+      fonts:
+        - asset: assets/fonts/Muli-Light.ttf
+        - asset: assets/fonts/Muli-Bold.ttf
+          weight: 700
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

@@ -24,14 +24,14 @@ class MovieBoxState extends State<MovieBox> {
               image: new NetworkImage(widget.movie.getPosterUrl()),
             )),
         footer: new GridTileBar(
-          title: new Text(widget.movie.title),
-          subtitle: new Text("TMDB Score: ${widget.movie.vote_average}"),
+          title: new Text(widget.movie.title, style: new TextStyle(fontFamily: 'Muli')),
+          subtitle: new Text("TMDB Score: ${widget.movie.vote_average}", style: new TextStyle(fontFamily: 'Muli'),),
           backgroundColor: Colors.black.withOpacity(0.6),
         ),
       ),
       onTap: () {
         Navigator.push(context,
-            new MaterialPageRoute(builder: new InfoPage(widget.movie).build));
+            new MaterialPageRoute(builder: (BuildContext context) => new InfoPage(widget.movie)));
       },
     );
   }

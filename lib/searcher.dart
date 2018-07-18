@@ -9,10 +9,9 @@ class Searcher {
     return http.read("https://api.themoviedb.org/3/search/movie?api_key=$_TMDB_API_KEY&language=en-US&query=${Uri.encodeFull(title)}&page=1&include_adult=false");
   }
 
-  Future<String> searchPopular() {
-    return http.read("https://api.themoviedb.org/3/movie/popular?api_key=$_TMDB_API_KEY&language=en-US&page=1");
+  Future<String> searchPopular({int page = 1}) {
+    return http.read("https://api.themoviedb.org/3/movie/popular?api_key=$_TMDB_API_KEY&language=en-US&page=$page");
   }
-
   
   Future<String> searchById(String id) {
     return http.read("https://api.themoviedb.org/3/movie/$id?api_key=$_TMDB_API_KEY&language=en-US");

@@ -19,6 +19,7 @@ class SearchBarState extends State<SearchBar> {
         controller: widget.controller,
         decoration: new InputDecoration(
           hintText: "Filter by title",
+          hintStyle: new TextStyle(fontFamily: 'Muli'),
           contentPadding: new EdgeInsets.all(10.0)
         ),
       ),
