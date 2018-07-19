@@ -3,7 +3,7 @@ import 'searcher.dart';
 import 'dart:convert';
 import 'movie.dart';
 import 'movie_box.dart';
-import 'watchlist.dart';
+import 'watchlist_manager.dart';
 import 'dart:async';
 
 class PopularMoviesWidget extends StatefulWidget {
@@ -18,6 +18,7 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
   int pageCounter = 1;
   bool isLoadingContent = false;
   static List<int> watched;
+  static List<int> toWatch;
 
   Widget build(BuildContext context) {
     Orientation orientation = MediaQuery.of(context).orientation;
@@ -35,7 +36,7 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
                 .map<Movie>((movie) => new Movie(movie))
                 .toList();
             isLoadingContent = false;
-            loadingContent.forEach((movie) => checkWatched(movie));
+            loadingContent.forEach((movie) => checkWatchlist(movie));
         }).whenComplete(() {
           this.setState((){
             movies.addAll(loadingContent);
@@ -72,7 +73,8 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
                           .map<Movie>((movie) => new Movie(movie))
                           .toList();
                       watched = response.data[0];
-                      movies.forEach((movie) => checkWatched(movie));                       
+                      toWatch = response.data[2];
+                      movies.forEach((movie) => checkWatchlist(movie));
                       return getGridView(movies, orientation);
                     }
                 }
@@ -85,7 +87,7 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
 
   Widget getGridView(List<Movie> movies, Orientation orientation) {
     return new GridView.count(
-      children: movies.map((movie) => new MovieBox(movie)).toList(),
+      children: movies.map((movie) => new MovieBox(checkWatchlist(movie))).toList(),
       crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
       crossAxisSpacing: 8.0,
       mainAxisSpacing: 8.0,
@@ -93,17 +95,24 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
       controller: controller,
     );
   }
+  
+  static Movie checkWatchlist(Movie movie) {
+    if(watched.contains(movie.id))
+      movie.setWatched(true);
+    else if(toWatch.contains((movie.id)))
+      movie.setToWatch(true);
+    else {
+      movie.setToWatch(false);
+      movie.setWatched(false);
+    }
+    return movie;
+  }
 
   Future<List> initializeContent() async {
     List content = new List();
     content.add(await Watchlist.watchedList());
     content.add(await searcher.searchPopular());
+    content.add(await Watchlist.watchList());
     return content;
-  }
-  
-  static checkWatched(Movie movie) {
-    if(watched.contains(movie.id)) {
-    movie.setWatched(true);
-    }
   }
 }

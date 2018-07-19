@@ -14,13 +14,14 @@ class Watchlist {
     });
 
     db = await openDatabase(path);
+    (await watchedList()).forEach((id) => dropToWatchMovie(id));
   }
 
   static addWatchedMovie(int id) async {
     db.execute("INSERT INTO watched(id) VALUES($id)");
   }
 
-  static addtoWatchMovie(int id) async {
+  static addToWatchMovie(int id) async {
     db.rawInsert("INSERT INTO toWatch(id) VALUES($id)");
   }
 
@@ -30,7 +31,16 @@ class Watchlist {
   }
   
   static dropWatchedMovie(int id) async {
-    db.execute("DELETE FROM watched WHERE id = $id");
+    db.rawDelete("DELETE FROM watched WHERE id = $id");
+  }
+
+  static dropToWatchMovie(int id) async {
+    db.rawDelete("DELETE FROM toWatch WHERE id = $id");
+  }
+
+  static Future<List<int>> watchList() async {
+    List<Map> watchList = await db.rawQuery("SELECT * FROM toWatch");
+    return watchList.map<int>((entry) => entry['id']).toList();
   }
 
   static closeDatabase() async {

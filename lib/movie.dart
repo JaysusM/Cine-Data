@@ -8,15 +8,22 @@ class Movie {
       overview,
       release_date;
   List genre_ids;
-  bool video, adult, watched = false;
+  bool video, adult, _watched = false, _toWatch = false;
 
   String getPosterUrl() {
     return "https://image.tmdb.org/t/p/w500$poster_path";
   }
 
   void setWatched(bool watched) {
-    this.watched = watched;
+    this._watched = watched;
   }
+
+  void setToWatch(bool toWatch) {
+    this._toWatch = toWatch;
+  }
+
+  bool watched() => _watched;
+  bool toWatch() => _toWatch;
 
   Movie(Map content)
       : vote_count = content["vote_count"],
