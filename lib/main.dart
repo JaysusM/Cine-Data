@@ -5,10 +5,15 @@ import 'searcher.dart';
 import 'popular_movies.dart';
 import 'movie.dart';
 import 'dart:convert';
+import 'watchlist.dart';
 
-void main() => runApp(new MyApp());
+void main() async {
+  await Watchlist.initDatabase();
+  runApp(new MyApp());
+}
 
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -77,14 +82,16 @@ class SearchScreenState extends State {
           titleFilter = searchBar.controller.text;
           isSearching = true;
         });
-        movies = jsonDecode(
+        List<Movie> aux = jsonDecode(
                 await searcher.searchByTitle(titleFilter).whenComplete(() {
           this.setState(() {
             isSearching = false;
           });
         }))['results']
-            .map<Widget>((movie) => new MovieBox(new Movie(movie)))
+            .map<Movie>((movie) => new Movie(movie))
             .toList();
+        aux.forEach((movie) => PopularMoviesWidgetState.checkWatched(movie));
+        movies = aux.map<Widget>((movie) => new MovieBox(movie)).toList();
       }
     });
   }
@@ -92,6 +99,7 @@ class SearchScreenState extends State {
   @override
   Widget build(BuildContext context) {
     Orientation orientation = MediaQuery.of(context).orientation;
+
 
     return new Scaffold(
       appBar: new AppBar(

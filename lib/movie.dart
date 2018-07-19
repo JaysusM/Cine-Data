@@ -8,10 +8,14 @@ class Movie {
       overview,
       release_date;
   List genre_ids;
-  bool video, adult;
+  bool video, adult, watched = false;
 
   String getPosterUrl() {
     return "https://image.tmdb.org/t/p/w500$poster_path";
+  }
+
+  void setWatched(bool watched) {
+    this.watched = watched;
   }
 
   Movie(Map content)
@@ -55,7 +59,7 @@ class MovieFull {
       : adult = content['adult'],
         backdrop_path = content['backdrop_path'],
         budget = content['budget'],
-        genres = content['genres'].map((content) => content['name']).toList(),
+        genres = content['genres'].map((content) => (content['name'] == 'Science Fiction') ? 'Sci-Fi' : content['name']).toList(),
         homepage = content['homepage'],
         id = content['id'],
         imdb_id = content['imdb_id'],

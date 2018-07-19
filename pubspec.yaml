@@ -5,6 +5,8 @@ dependencies:
   flutter:
     sdk: flutter
   http: any
+  path_provider: any
+  sqflite: "^0.11.0+1"
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -39,7 +41,7 @@ flutter:
     - assets/Music.png
     - assets/Mystery.png
     - assets/Romance.png
-    - assets/Science Fiction.png
+    - assets/Sci-Fi.png
     - assets/Thriller.png
     - assets/TV Movie.png
     - assets/War.png

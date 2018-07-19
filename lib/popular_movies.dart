@@ -3,6 +3,8 @@ import 'searcher.dart';
 import 'dart:convert';
 import 'movie.dart';
 import 'movie_box.dart';
+import 'watchlist.dart';
+import 'dart:async';
 
 class PopularMoviesWidget extends StatefulWidget {
   @override
@@ -15,11 +17,13 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
   ScrollController controller = new ScrollController();
   int pageCounter = 1;
   bool isLoadingContent = false;
+  static List<int> watched;
 
   Widget build(BuildContext context) {
     Orientation orientation = MediaQuery.of(context).orientation;
     List<Movie> loadingContent;
     double offset;
+    
     controller.addListener(() async {
       if (controller.position.maxScrollExtent == controller.offset &&
           !isLoadingContent) {
@@ -31,6 +35,7 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
                 .map<Movie>((movie) => new Movie(movie))
                 .toList();
             isLoadingContent = false;
+            loadingContent.forEach((movie) => checkWatched(movie));
         }).whenComplete(() {
           this.setState((){
             movies.addAll(loadingContent);
@@ -62,14 +67,17 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
                   default:
                     if (response.hasError)
                       return new Text("Error: ${response.error}");
-                    else
-                      movies = jsonDecode(response.data)['results']
+                    else {
+                      movies = jsonDecode(response.data[1])['results']
                           .map<Movie>((movie) => new Movie(movie))
                           .toList();
-                    return getGridView(movies, orientation);
+                      watched = response.data[0];
+                      movies.forEach((movie) => checkWatched(movie));                       
+                      return getGridView(movies, orientation);
+                    }
                 }
               },
-              future: searcher.searchPopular())
+              future: initializeContent())
           : getGridView(movies, orientation),
       margin: new EdgeInsets.all(5.0),
     );
@@ -84,5 +92,18 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
       childAspectRatio: 0.7,
       controller: controller,
     );
+  }
+
+  Future<List> initializeContent() async {
+    List content = new List();
+    content.add(await Watchlist.watchedList());
+    content.add(await searcher.searchPopular());
+    return content;
+  }
+  
+  static checkWatched(Movie movie) {
+    if(watched.contains(movie.id)) {
+    movie.setWatched(true);
+    }
   }
 }
