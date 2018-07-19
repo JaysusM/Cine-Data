@@ -28,8 +28,8 @@ class MovieBoxState extends State<MovieBox> {
         footer: new GridTileBar(
           leading: (widget.movie.watched()) ? new Icon(Icons.check_circle, color: Colors.green) : (!widget.movie.toWatch()) ? new Container() : new Icon(Icons.remove_red_eye, color: Colors.white),
           title: new Text(widget.movie.title, style: new TextStyle(fontFamily: 'Muli')),
-          subtitle: new Text("TMDB Score: ${widget.movie.vote_average}", style: new TextStyle(fontFamily: 'Muli'),),
-          backgroundColor: (widget.movie.watched()) ? Colors.green.withOpacity(0.6) : (!widget.movie.toWatch()) ? Colors.black.withOpacity(0.6) : Colors.blueAccent.withOpacity(0.7),
+          subtitle: new Text("TMDB Score: ${(widget.movie.vote_average != 0.0) ? widget.movie.vote_average : "-"}", style: new TextStyle(fontFamily: 'Muli'),),
+          backgroundColor: (widget.movie.watched()) ? Colors.green.withOpacity(0.7) : (!widget.movie.toWatch()) ? Colors.black.withOpacity(0.7) : Colors.blueAccent.withOpacity(0.7),
         ),
       ),
       onTap: () {
@@ -41,13 +41,14 @@ class MovieBoxState extends State<MovieBox> {
           if(widget.movie.watched()) {
             Watchlist.dropWatchedMovie(widget.movie.id);
             widget.movie.setWatched(false);
-            PopularMoviesWidgetState.watched.remove(widget.movie.id);
+            PopularMoviesWidgetState.watched.removeWhere((movie) => movie.id == widget.movie.id);
           } else {
-            Watchlist.addWatchedMovie(widget.movie.id);
+            Watchlist.addWatchedMovie(widget.movie);
             widget.movie.setWatched(true);
+            widget.movie.setToWatch(false);
             Watchlist.dropToWatchMovie(widget.movie.id);
-            PopularMoviesWidgetState.toWatch.remove(widget.movie.id);
-            PopularMoviesWidgetState.watched.add(widget.movie.id);
+            PopularMoviesWidgetState.toWatch.removeWhere((movie) => movie.id == widget.movie.id);
+            PopularMoviesWidgetState.watched.add(widget.movie);
           }
         });
       },
@@ -56,11 +57,11 @@ class MovieBoxState extends State<MovieBox> {
           if(widget.movie.toWatch()) {
             Watchlist.dropToWatchMovie(widget.movie.id);
             widget.movie.setToWatch(false);
-            PopularMoviesWidgetState.toWatch.remove(widget.movie.id);
+            PopularMoviesWidgetState.toWatch.removeWhere((movie) => movie.id == widget.movie.id);
           } else if (!widget.movie.watched()){
-            Watchlist.addToWatchMovie(widget.movie.id);
+            Watchlist.addToWatchMovie(widget.movie);
             widget.movie.setToWatch(true);
-            PopularMoviesWidgetState.toWatch.add(widget.movie.id);
+            PopularMoviesWidgetState.toWatch.add(widget.movie);
           }
         });
       },

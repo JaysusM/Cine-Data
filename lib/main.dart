@@ -3,6 +3,8 @@ import 'popular_movies.dart';
 import 'watchlist_manager.dart';
 import 'search_screen.dart';
 import 'watched_screen.dart';
+import 'genre_screen.dart';
+import 'upcoming_movies.dart';
 
 void main() async {
   await Watchlist.initDatabase();
@@ -29,11 +31,20 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainScreen extends StatelessWidget {
-  Widget popularMovies;
+class MainScreen extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => new MainScreenState();
+}
 
-  MainScreen() {
+class MainScreenState extends State with SingleTickerProviderStateMixin{
+  Widget popularMovies, upcomingMovies, genreScreen;
+  TabController tabController;
+
+  MainScreenState() {
     popularMovies = new PopularMoviesWidget();
+    genreScreen = new GenreScreen();
+    upcomingMovies = new UpcomingMoviesWidget();
+    tabController = new TabController(length: 3, vsync: this)..index = 1;
   }
 
   Widget build(BuildContext context) {
@@ -60,8 +71,21 @@ class MainScreen extends StatelessWidget {
                   Navigator.of(context).pushNamed("/search");
                 })
           ],
+          bottom: new TabBar(tabs: <Tab>[
+            new Tab(child: new Text("GENRES", style: new TextStyle(fontFamily: 'Muli', fontWeight: FontWeight.bold))),
+            new Tab(child: new Text("POPULAR", style: new TextStyle(fontFamily: 'Muli', fontWeight: FontWeight.bold))),
+            new Tab(child: new Text("UPCOMING", style: new TextStyle(fontFamily: 'Muli', fontWeight: FontWeight.bold))),
+          ],
+            controller: tabController,
+          ),
         ),
-        body: popularMovies
+        body: new TabBarView(children: <Widget>[
+          genreScreen,
+          popularMovies,
+          upcomingMovies
+        ],
+        controller: tabController,
+        ),
     );
   }
   

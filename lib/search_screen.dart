@@ -84,15 +84,10 @@ class SearchScreenState extends State {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
           ))
-          : new Column(
-        children: <Widget>[
-          new Image(image: new AssetImage("assets/search.png")),
-          new Text(
+          : new Center(child: new Text(
             "Type any keyword to search a movie",
-            style: new TextStyle(fontSize: 20.0, fontFamily: 'Muli', fontWeight: FontWeight.bold),
+            style: new TextStyle(fontSize: 14.0, fontFamily: 'Muli'),
           )
-        ],
-        crossAxisAlignment: CrossAxisAlignment.center,
       ),
       resizeToAvoidBottomPadding: false,
     );

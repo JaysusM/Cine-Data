@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'movie.dart';
-import 'searcher.dart';
-import 'dart:convert';
 import 'dart:async';
 import 'movie_box.dart';
 import 'popular_movies.dart';
@@ -49,30 +47,30 @@ class WatchlistScreenState extends State<WatchlistScreen> {
   }
 
   Widget showGrid() {
-    return new Container(child: new GridView.count(
+    return new Container(child: (movies.isNotEmpty) ? new GridView.count(
       children: movies.map<Widget>((movie) => new MovieBox(movie)).toList(),
       crossAxisCount: 2,
       crossAxisSpacing: 8.0,
       mainAxisSpacing: 8.0,
       childAspectRatio: 0.7,
-    ),
+    ) :
+          new Center(
+            child: new Text("It's lonely here,\n you should try adding something...",
+            style: new TextStyle(fontFamily: 'Muli'), textAlign: TextAlign.center,
+            )
+          ),
     margin: new EdgeInsets.all(8.0),
     );
   }
 
   Future loadContent() async {
-    Searcher searcher = new Searcher();
     List<Movie> movies = new List();
     int lim = (widget.isWatched) ? PopularMoviesWidgetState.watched.length : PopularMoviesWidgetState.toWatch.length;
     for(int i = 0; i < lim; i++) {
       if(widget.isWatched) {
-        String movieContent = await searcher.searchById(
-            PopularMoviesWidgetState.watched[i].toString());
-        movies.add(new Movie(jsonDecode(movieContent))..setWatched(true));
+        movies.add(PopularMoviesWidgetState.watched[i]..setWatched(true));
       } else {
-        String movieContent = await searcher.searchById(
-            PopularMoviesWidgetState.toWatch[i].toString());
-        movies.add(new Movie(jsonDecode(movieContent))..setToWatch(true));
+        movies.add(PopularMoviesWidgetState.toWatch[i]..setToWatch(true));
       }
     }
     return movies;

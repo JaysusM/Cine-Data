@@ -25,6 +25,18 @@ class Movie {
   bool watched() => _watched;
   bool toWatch() => _toWatch;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is MovieFull &&
+              runtimeType == other.runtimeType &&
+              id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
+  Movie.elemental(this.id, this.title, this.vote_average, this.poster_path);
+
   Movie(Map content)
       : vote_count = content["vote_count"],
         id = content["id"],
@@ -103,6 +115,19 @@ class MovieFull {
   static String getImage(String path) {
     return "https://image.tmdb.org/t/p/w500$path";
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is MovieFull &&
+              runtimeType == other.runtimeType &&
+              id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
+
+
 }
 
 class Company {

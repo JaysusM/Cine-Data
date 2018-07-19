@@ -25,7 +25,6 @@ flutter:
 
   assets:
     - assets/loading.gif
-    - assets/search.png
     - assets/loadingCircle.gif
     - assets/Action.png
     - assets/Adventure.png
