@@ -17,15 +17,15 @@ class Searcher {
     return http.read("https://api.themoviedb.org/3/movie/$id?api_key=$_TMDB_API_KEY&language=en-US");
   }
 
-  Future<String> searchByGenre(int genre) {
-    return http.read("http://api.themoviedb.org/3/discover/movie?api_key=$_TMDB_API_KEY&sort_by=popularity.desc&with_genres=$genre");
+  Future<String> searchByGenre(int genre, {int page = 1}) {
+    return http.read("http://api.themoviedb.org/3/discover/movie?api_key=$_TMDB_API_KEY&sort_by=popularity.desc&with_genres=$genre&page=$page");
   }
 
   Future<String> getGenres() {
     return http.read("https://api.themoviedb.org/3/genre/movie/list?api_key=$_TMDB_API_KEY&language=en-US");
   }
 
-  Future<String> searchUpcoming({int page = 1, String region = "ES"}) {
+  Future<String> searchUpcoming({int page = 1, String region = "US"}) {
     return http.read("https://api.themoviedb.org/3/movie/upcoming?api_key=$_TMDB_API_KEY&language=en-US&page=$page&region=$region");
   }
 }

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'movie.dart';
 import 'movie_box.dart';
 import 'popular_movies.dart';
+import 'grid_movie_screen.dart';
 
 class UpcomingMoviesWidget extends StatefulWidget {
   @override
@@ -18,7 +19,6 @@ class UpcomingMoviesState extends State {
   bool isLoadingContent = false;
 
   Widget build(BuildContext context) {
-    Orientation orientation = MediaQuery.of(context).orientation;
     List<Movie> loadingContent;
     double offset;
 
@@ -33,12 +33,13 @@ class UpcomingMoviesState extends State {
               .map<Movie>((movie) => new Movie(movie))
               .toList();
           isLoadingContent = false;
-          loadingContent.forEach((movie) => checkWatchlist(movie));
+          loadingContent.forEach((movie) => GridMovieScreen.checkWatchlist(movie));
         }).whenComplete(() {
-          this.setState((){
+          this.setState(() {
             movies.addAll(loadingContent);
             controller.jumpTo(offset);
-          });});
+          });
+        });
       }
     });
 
@@ -69,37 +70,14 @@ class UpcomingMoviesState extends State {
                   movies = jsonDecode(response.data)['results']
                       .map<Movie>((movie) => new Movie(movie))
                       .toList();
-                  movies.forEach((movie) => checkWatchlist(movie));
-                  return getGridView(movies, orientation);
+                  movies.forEach((movie) => GridMovieScreen.checkWatchlist(movie));
+                  return new GridMovieScreen(movies, controller);
                 }
             }
           },
           future: searcher.searchUpcoming())
-          : getGridView(movies, orientation),
-      margin: new EdgeInsets.all(5.0),
+          : new GridMovieScreen(movies, controller),
     );
   }
 
-  Widget getGridView(List<Movie> movies, Orientation orientation) {
-    return new GridView.count(
-      children: movies.map((movie) => new MovieBox(checkWatchlist(movie))).toList(),
-      crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
-      crossAxisSpacing: 8.0,
-      mainAxisSpacing: 8.0,
-      childAspectRatio: 0.7,
-      controller: controller,
-    );
-  }
-
-  static Movie checkWatchlist(Movie movie) {
-    if(PopularMoviesWidgetState.watched.any((x) => x.id == movie.id))
-      movie.setWatched(true);
-    else if(PopularMoviesWidgetState.toWatch.any((x) => x.id == movie.id))
-      movie.setToWatch(true);
-    else {
-      movie.setToWatch(false);
-      movie.setWatched(false);
-    }
-    return movie;
-  }
 }

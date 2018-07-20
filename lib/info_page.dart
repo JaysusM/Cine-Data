@@ -3,6 +3,8 @@ import 'movie.dart';
 import 'searcher.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'popular_movies.dart';
+import 'watchlist_manager.dart';
 
 class InfoPage extends StatefulWidget {
   Movie movie;
@@ -17,6 +19,8 @@ class InfoPageState extends State<InfoPage> {
   Searcher searcher = new Searcher();
   MovieFull fullMovie;
   bool openPoster;
+  Color color;
+  IconData icon;
 
   InfoPageState() {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -49,12 +53,12 @@ class InfoPageState extends State<InfoPage> {
                             else {
                               fullMovie =
                                   new MovieFull(jsonDecode(response.data));
-                              return buildPage();
+                              return _buildPage();
                             }
                         }
                       },
                       future: searcher.searchById(widget.movie.id.toString()))
-                  : buildPage(),
+                  : _buildPage(),
               new GestureDetector(
                 child: new Container(
                   child: new Hero(
@@ -216,7 +220,21 @@ class InfoPageState extends State<InfoPage> {
       return y;
   }
 
-  Widget buildPage() {
+  Widget _buildPage() {
+
+    if(PopularMoviesWidgetState.watched.any((movie) => movie.id == fullMovie.id)) {
+      fullMovie.setWatched(true);
+      color = Colors.green;
+      icon = Icons.check_circle;
+    } else if (PopularMoviesWidgetState.toWatch.any((movie) => movie.id == fullMovie.id)) {
+      fullMovie.setToWatch(true);
+      color = Colors.blue;
+      icon = Icons.remove_red_eye;
+    } else {
+      color = Colors.blueGrey;
+      icon = Icons.clear;
+    }
+
     return new Column(
       children: <Widget>[
         new Stack(
@@ -279,13 +297,35 @@ class InfoPageState extends State<InfoPage> {
               ),
               left: 75.0,
               top: 17.7,
-            )
+            ),
           ],
           overflow: Overflow.visible,
         ),
         new Container(
           child: new Row(
             children: <Widget>[
+              new Container(child: new Material(child: new MaterialButton(onPressed: () {
+                this.setState(() {
+                  _checkButton();
+                });
+              }, child: new Icon(icon, color: Colors.white),
+                splashColor: Colors.black,
+              ),
+                shape: BeveledRectangleBorder(
+                  side: BorderSide(color: Theme.of(context).primaryColor,
+                  width: 1.0
+                  ),
+                  borderRadius: new BorderRadius.only(bottomRight: Radius.circular(15.0),
+                  topLeft: Radius.circular(15.0)),
+                ),
+                color: color,
+                shadowColor: Colors.black,
+                elevation: 8.0,
+              ),
+              height: 40.0,
+                width: 60.0,
+              ),
+              new Container(width: 15.0),
               new Row(
                 children: <Widget>[
                   new Icon(_setRating(2.0),
@@ -315,10 +355,43 @@ class InfoPageState extends State<InfoPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
           ),
-          margin: new EdgeInsets.only(top: 15.0, left: 15.0),
+          margin: new EdgeInsets.only(top: 25.0, left: 15.0),
         ),
         _getContentOverview()
       ],
     );
   }
+  
+  void _checkButton() {
+    if(fullMovie.watched()) {
+      fullMovie.setWatched(false);
+      color = Colors.blueGrey;
+      icon = Icons.remove_red_eye;
+
+      Watchlist.dropWatchedMovie(fullMovie.id);
+      fullMovie.setToWatch(false);
+      PopularMoviesWidgetState.watched.removeWhere((movie) => movie.id == fullMovie.id);
+
+    } else if(fullMovie.toWatch()) {
+      fullMovie.setToWatch(false);
+      fullMovie.setWatched(true);
+      color = Colors.green;
+      icon = Icons.check_circle;
+
+      Watchlist.dropToWatchMovie(fullMovie.id);
+      PopularMoviesWidgetState.toWatch.removeWhere((movie) => movie.id == fullMovie.id);
+
+      Watchlist.addWatchedMovie(new Movie.elemental(fullMovie.id, fullMovie.title, fullMovie.vote_average, fullMovie.poster_path));
+      PopularMoviesWidgetState.watched.add(new Movie.elemental(fullMovie.id, fullMovie.title, fullMovie.vote_average, fullMovie.poster_path));
+
+    } else {
+      fullMovie.setToWatch(true);
+      color = Colors.blue;
+      icon = Icons.clear;
+
+      Watchlist.addToWatchMovie(new Movie.elemental(fullMovie.id, fullMovie.title, fullMovie.vote_average, fullMovie.poster_path));
+      PopularMoviesWidgetState.toWatch.add(new Movie.elemental(fullMovie.id, fullMovie.title, fullMovie.vote_average, fullMovie.poster_path));
+    }
+  }
+  
 }

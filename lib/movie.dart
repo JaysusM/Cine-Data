@@ -73,6 +73,18 @@ class MovieFull {
   int budget, id, revenue, runtime, vote_count, belongs_to_collection__id;
   List<dynamic> genres, spoken_languages, production_companies;
   double vote_average, popularity;
+  bool _watched = false, _toWatch = false;
+
+  void setWatched(bool watched) {
+    this._watched = watched;
+  }
+
+  void setToWatch(bool toWatch) {
+    this._toWatch = toWatch;
+  }
+
+  bool watched() => _watched;
+  bool toWatch() => _toWatch;
 
   MovieFull(Map content)
       : adult = content['adult'],

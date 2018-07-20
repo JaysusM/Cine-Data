@@ -3,9 +3,8 @@ import 'searcher.dart';
 import 'movie.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'movie_box.dart';
 import 'dictionary.dart';
-import 'popular_movies.dart';
+import 'grid_movie_screen.dart';
 
 class GenreScreen extends StatefulWidget {
   @override
@@ -19,33 +18,8 @@ class GenreScreenState extends State {
   int pageCounter = 1;
   bool isLoadingContent = false;
   Dictionary genres = new Dictionary();
-  GlobalKey genreContentKey;
 
   Widget build(BuildContext context) {
-    List<Movie> loadingContent;
-    double offset;
-
-    controller.addListener(() async {
-      if (controller.position.maxScrollExtent == controller.offset &&
-          !isLoadingContent) {
-        offset = controller.offset;
-        pageCounter++;
-        isLoadingContent = true;
-        await searcher.searchPopular(page: pageCounter).then((content) {
-          loadingContent = jsonDecode(content)['results']
-              .map<Movie>((movie) => new Movie(movie))
-              .toList();
-          isLoadingContent = false;
-          loadingContent.forEach((movie) => checkWatchlist(movie));
-        }).whenComplete(() {
-          genreContentKey.currentState.setState(() {
-            movies.addAll(loadingContent);
-            controller.jumpTo(offset);
-          });
-        });
-      }
-    });
-
     return new Container(
       child: (genres.keys.length == 0)
           ? new FutureBuilder(
@@ -93,7 +67,7 @@ class GenreScreenState extends State {
     decoration: new BoxDecoration(border: new Border(bottom: new BorderSide(color: Theme.of(context).accentColor, width: 0.2))),
     ),
       onTap: () {
-          genreContentKey = new GlobalKey();
+
           Navigator.of(context).push(new MaterialPageRoute(builder: (BuildContext context) {
             return new Scaffold(
               appBar: new AppBar(
@@ -121,7 +95,7 @@ class GenreScreenState extends State {
                       return new Text("Error: ${response.error}");
                     else {
                       movies = jsonDecode(response.data)['results'].map<Movie>((movie) => new Movie(movie)).toList();
-                      return getGridView(movies);
+                      return new GridMovieScreen(movies, controller);
                     }
                 }
               }, future: searcher.searchByGenre(genres.getValue(value))),
@@ -131,33 +105,7 @@ class GenreScreenState extends State {
     );
 
   }
-
-  Widget getGridView(List<Movie> movies) {
-    return new Container(child: new GridView.count(
-      children: movies.map((movie) => new MovieBox(checkWatchlist(movie)))
-          .toList(),
-      crossAxisCount: 2,
-      crossAxisSpacing: 8.0,
-      mainAxisSpacing: 8.0,
-      childAspectRatio: 0.7,
-      controller: controller,
-    ),
-    margin: new EdgeInsets.all(8.0),
-    );
-  }
-
-  static Movie checkWatchlist(Movie movie) {
-    if (PopularMoviesWidgetState.watched.any((x) => x.id == movie.id))
-      movie.setWatched(true);
-    else if (PopularMoviesWidgetState.toWatch.any((x) => x.id == movie.id))
-      movie.setToWatch(true);
-    else {
-      movie.setToWatch(false);
-      movie.setWatched(false);
-    }
-    return movie;
-  }
-
+  
   Future initializeContent() async {
     List genres = jsonDecode(await searcher.getGenres())['genres'];
     genres.forEach((genre) => this.genres.add(genre['name'], genre['id']));

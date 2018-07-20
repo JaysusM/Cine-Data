@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'searcher.dart';
 import 'search_bar.dart';
-import 'popular_movies.dart';
+import 'grid_movie_screen.dart';
 import 'dart:convert';
 import 'movie_box.dart';
 import 'movie.dart';
@@ -14,7 +14,7 @@ class SearchScreen extends StatefulWidget {
 class SearchScreenState extends State {
   SearchBar searchBar;
   Searcher searcher;
-  List<Widget> movies;
+  List<Movie> movies;
   String titleFilter = "";
   bool isSearching = false;
   bool isEmpty = true;
@@ -41,17 +41,14 @@ class SearchScreenState extends State {
             }))['results']
             .map<Movie>((movie) => new Movie(movie))
             .toList();
-        aux.forEach((movie) => PopularMoviesWidgetState.checkWatchlist(movie));
-        movies = aux.map<Widget>((movie) => new MovieBox(movie)).toList();
+        aux.forEach((movie) => GridMovieScreen.checkWatchlist(movie));
+        movies = aux;
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    Orientation orientation = MediaQuery.of(context).orientation;
-
-
     return new Scaffold(
       appBar: new AppBar(
         title: searchBar,
@@ -67,13 +64,7 @@ class SearchScreenState extends State {
       ),
       body: (!isEmpty)
           ? (!isSearching)
-          ? new GridView.count(
-        crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
-        crossAxisSpacing: 5.0,
-        mainAxisSpacing: 5.0,
-        childAspectRatio: 0.7,
-        children: movies,
-      )
+          ? new GridMovieScreen(movies, new ScrollController())
           : new Center(
           child: new Column(
             children: <Widget>[

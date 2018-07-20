@@ -24,9 +24,21 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         "/search": (BuildContext context) => new SearchScreen(),
         "/watched": (BuildContext context) => new WatchlistScreen(true),
-        "/toWatch": (BuildContext context) => new WatchlistScreen(false)
+        "/toWatch": (BuildContext context) => new WatchlistScreen(false),
+        "/genres" : (BuildContext context) => ScaffoldContainer(new GenreScreen(), "Genres"),
+        "/popular" : (BuildContext context) => ScaffoldContainer(new PopularMoviesWidget(), "Popular Movies"),
+        "/upcoming": (BuildContext context) => ScaffoldContainer(new UpcomingMoviesWidget(), "Upcoming Movies")
       },
       home: new MainScreen(),
+    );
+  }
+
+  Widget ScaffoldContainer(Widget body, String title) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text(title, style: new TextStyle(fontFamily: 'Muli', fontWeight: FontWeight.bold)),
+      ),
+      body: body,
     );
   }
 }
@@ -54,15 +66,24 @@ class MainScreenState extends State with SingleTickerProviderStateMixin{
               children: <Widget>[
                 new ListTile(title: new Text("MENU", style: new TextStyle(fontFamily: 'Muli', fontWeight: FontWeight.bold, fontSize: 20.0)),
                 leading: new Icon(Icons.menu)),
+                new Divider(),
                 menuEntryTile(context, "/watched", "Watched Movies"),
+                new Divider(),
                 menuEntryTile(context, "/toWatch", "To Watch Movies"),
-                menuEntryTile(context, "/search", "Search by title")
+                new Divider(),
+                menuEntryTile(context, "/search", "Search by title"),
+                new Divider(),
+                menuEntryTile(context, "/genres", "Discover by genres"),
+                new Divider(),
+                menuEntryTile(context, "/popular", "Popular Movies"),
+                new Divider(),
+                menuEntryTile(context, "/upcoming", "Upcoming Movies"),
               ],
             ),
           elevation: 15.0,
         ),
         appBar: new AppBar(
-          title: new Text("Popular Movies", style: new TextStyle(
+          title: new Text("HOME", style: new TextStyle(
               fontWeight: FontWeight.bold, fontFamily: 'Muli')),
           actions: <Widget>[
             new IconButton(

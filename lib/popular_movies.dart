@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'searcher.dart';
 import 'dart:convert';
 import 'movie.dart';
-import 'movie_box.dart';
+import 'grid_movie_screen.dart';
 import 'watchlist_manager.dart';
 import 'dart:async';
 
@@ -21,7 +21,6 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
   static List<Movie> toWatch;
 
   Widget build(BuildContext context) {
-    Orientation orientation = MediaQuery.of(context).orientation;
     List<Movie> loadingContent;
     double offset;
     
@@ -36,7 +35,7 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
                 .map<Movie>((movie) => new Movie(movie))
                 .toList();
             isLoadingContent = false;
-            loadingContent.forEach((movie) => checkWatchlist(movie));
+            loadingContent.forEach((movie) => GridMovieScreen.checkWatchlist(movie));
         }).whenComplete(() {
           this.setState((){
             movies.addAll(loadingContent);
@@ -74,38 +73,13 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
                           .toList();
                       watched = response.data[0];
                       toWatch = response.data[2];
-                      movies.forEach((movie) => checkWatchlist(movie));
-                      return getGridView(movies, orientation);
+                      return new GridMovieScreen(movies, controller);
                     }
                 }
               },
               future: initializeContent())
-          : getGridView(movies, orientation),
-      margin: new EdgeInsets.all(5.0),
+          : new GridMovieScreen(movies, controller),
     );
-  }
-
-  Widget getGridView(List<Movie> movies, Orientation orientation) {
-    return new GridView.count(
-      children: movies.map((movie) => new MovieBox(checkWatchlist(movie))).toList(),
-      crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3,
-      crossAxisSpacing: 8.0,
-      mainAxisSpacing: 8.0,
-      childAspectRatio: 0.7,
-      controller: controller,
-    );
-  }
-  
-  static Movie checkWatchlist(Movie movie) {
-    if(watched.any((x) => x.id == movie.id))
-      movie.setWatched(true);
-    else if(toWatch.any((x) => x.id == movie.id))
-      movie.setToWatch(true);
-    else {
-      movie.setToWatch(false);
-      movie.setWatched(false);
-    }
-    return movie;
   }
 
   Future<List> initializeContent() async {
