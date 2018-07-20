@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dictionary.dart';
 import 'grid_movie_screen.dart';
+import 'loaded_content.dart';
 
 class GenreScreen extends StatefulWidget {
   @override
@@ -17,11 +18,10 @@ class GenreScreenState extends State {
   ScrollController controller = new ScrollController();
   int pageCounter = 1;
   bool isLoadingContent = false;
-  Dictionary genres = new Dictionary();
 
   Widget build(BuildContext context) {
     return new Container(
-      child: (genres.keys.length == 0)
+      child: (LoadedContent.genres.keys.length == 0)
           ? new FutureBuilder(
           builder: (BuildContext context, AsyncSnapshot response) {
             switch (response.connectionState) {
@@ -45,13 +45,13 @@ class GenreScreenState extends State {
                   return new Text("Error: ${response.error}");
                 else {
                   return new ListView(
-                    children: genres.nodes.map((node) => getListTile(node.key)).toList()
+                    children: LoadedContent.genres.nodes.map((node) => getListTile(node.key)).toList()
                   );
                 }
             }
           },
           future: initializeContent())
-          : new ListView(children: genres.nodes.map((node) => getListTile(node.key)).toList()),
+          : new ListView(children: LoadedContent.genres.nodes.map((node) => getListTile(node.key)).toList()),
       margin: new EdgeInsets.all(5.0),
     );
   }
@@ -98,7 +98,7 @@ class GenreScreenState extends State {
                       return new GridMovieScreen(movies, controller);
                     }
                 }
-              }, future: searcher.searchByGenre(genres.getValue(value))),
+              }, future: searcher.searchByGenre(LoadedContent.genres.getValue(value))),
             );
           }));
       },
@@ -108,7 +108,7 @@ class GenreScreenState extends State {
   
   Future initializeContent() async {
     List genres = jsonDecode(await searcher.getGenres())['genres'];
-    genres.forEach((genre) => this.genres.add(genre['name'], genre['id']));
+    genres.forEach((genre) => LoadedContent.genres.add(genre['name'], genre['id']));
     return new Future<Null>.value();
   }
 }

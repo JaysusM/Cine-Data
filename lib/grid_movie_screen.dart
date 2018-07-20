@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'movie_box.dart';
 import 'movie.dart';
-import 'popular_movies.dart';
+import 'loaded_content.dart';
 
 class GridMovieScreen extends StatelessWidget {
 
@@ -25,10 +25,10 @@ class GridMovieScreen extends StatelessWidget {
   }
 
   static Movie checkWatchlist(Movie movie) {
-    if (PopularMoviesWidgetState.watched.any((x) => x.id == movie.id)) {
+    if (LoadedContent.toWatchMovies.any((x) => x.id == movie.id)) {
       movie.setWatched(true);
       movie.setToWatch(false);
-    } else if (PopularMoviesWidgetState.toWatch.any((x) => x.id == movie.id)) {
+    } else if (LoadedContent.toWatchMovies.any((x) => x.id == movie.id)) {
       movie.setToWatch(true);
       movie.setWatched(false);
     } else {

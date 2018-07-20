@@ -6,6 +6,7 @@ import 'movie.dart';
 class Watchlist {
 
   static Database db;
+  static bool firstUseDB = true;
 
   static const String sqlMovie = """
     id INTEGER PRIMARY KEY,
@@ -27,10 +28,13 @@ class Watchlist {
     await openDatabase(path, version: 1, onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE watched ($sqlMovie)");
       await db.execute("CREATE TABLE toWatch ($sqlMovie)");
+      firstUseDB = true;
     });
 
     db = await openDatabase(path);
-    (await watchedList()).forEach((movie) => dropToWatchMovie(movie.id));
+    List<Movie> watched = await watchedList();
+
+    watched.forEach((movie) => dropToWatchMovie(movie.id));
   }
 
   static addWatchedMovie(Movie movie) async {

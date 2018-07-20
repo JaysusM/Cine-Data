@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'movie.dart';
 import 'info_page.dart';
 import 'watchlist_manager.dart';
-import 'popular_movies.dart';
+import 'loaded_content.dart';
 
 class MovieBox extends StatefulWidget {
   Movie movie;
@@ -41,14 +41,14 @@ class MovieBoxState extends State<MovieBox> {
           if(widget.movie.watched()) {
             Watchlist.dropWatchedMovie(widget.movie.id);
             widget.movie.setWatched(false);
-            PopularMoviesWidgetState.watched.removeWhere((movie) => movie.id == widget.movie.id);
+            LoadedContent.watchedMovies.removeWhere((movie) => movie.id == widget.movie.id);
           } else {
             Watchlist.addWatchedMovie(widget.movie);
             widget.movie.setWatched(true);
             widget.movie.setToWatch(false);
             Watchlist.dropToWatchMovie(widget.movie.id);
-            PopularMoviesWidgetState.toWatch.removeWhere((movie) => movie.id == widget.movie.id);
-            PopularMoviesWidgetState.watched.add(widget.movie);
+            LoadedContent.toWatchMovies.removeWhere((movie) => movie.id == widget.movie.id);
+            LoadedContent.watchedMovies.add(widget.movie);
           }
         });
       },
@@ -57,11 +57,11 @@ class MovieBoxState extends State<MovieBox> {
           if(widget.movie.toWatch()) {
             Watchlist.dropToWatchMovie(widget.movie.id);
             widget.movie.setToWatch(false);
-            PopularMoviesWidgetState.toWatch.removeWhere((movie) => movie.id == widget.movie.id);
+            LoadedContent.toWatchMovies.removeWhere((movie) => movie.id == widget.movie.id);
           } else if (!widget.movie.watched()){
             Watchlist.addToWatchMovie(widget.movie);
             widget.movie.setToWatch(true);
-            PopularMoviesWidgetState.toWatch.add(widget.movie);
+            LoadedContent.toWatchMovies.add(widget.movie);
           }
         });
       },

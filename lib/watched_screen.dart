@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'movie.dart';
 import 'dart:async';
 import 'movie_box.dart';
-import 'popular_movies.dart';
+import 'loaded_content.dart';
 
 class WatchlistScreen extends StatefulWidget {
 
@@ -65,12 +65,12 @@ class WatchlistScreenState extends State<WatchlistScreen> {
 
   Future loadContent() async {
     List<Movie> movies = new List();
-    int lim = (widget.isWatched) ? PopularMoviesWidgetState.watched.length : PopularMoviesWidgetState.toWatch.length;
+    int lim = (widget.isWatched) ? LoadedContent.watchedMovies.length : LoadedContent.toWatchMovies.length;
     for(int i = 0; i < lim; i++) {
       if(widget.isWatched) {
-        movies.add(PopularMoviesWidgetState.watched[i]..setWatched(true));
+        movies.add(LoadedContent.watchedMovies[i]..setWatched(true));
       } else {
-        movies.add(PopularMoviesWidgetState.toWatch[i]..setToWatch(true));
+        movies.add(LoadedContent.toWatchMovies[i]..setToWatch(true));
       }
     }
     return movies;

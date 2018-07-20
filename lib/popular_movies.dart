@@ -5,6 +5,7 @@ import 'movie.dart';
 import 'grid_movie_screen.dart';
 import 'watchlist_manager.dart';
 import 'dart:async';
+import 'loaded_content.dart';
 
 class PopularMoviesWidget extends StatefulWidget {
   @override
@@ -13,12 +14,9 @@ class PopularMoviesWidget extends StatefulWidget {
 
 class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
   Searcher searcher = new Searcher();
-  List<Movie> movies;
   ScrollController controller = new ScrollController();
   int pageCounter = 1;
   bool isLoadingContent = false;
-  static List<Movie> watched;
-  static List<Movie> toWatch;
 
   Widget build(BuildContext context) {
     List<Movie> loadingContent;
@@ -38,14 +36,14 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
             loadingContent.forEach((movie) => GridMovieScreen.checkWatchlist(movie));
         }).whenComplete(() {
           this.setState((){
-            movies.addAll(loadingContent);
+            LoadedContent.popularMovies.addAll(loadingContent);
             controller.jumpTo(offset);
           });});
       }
     });
 
     return new Container(
-      child: (movies == null)
+      child: (LoadedContent.popularMovies == null)
           ? new FutureBuilder(
               builder: (BuildContext context, AsyncSnapshot response) {
                 switch (response.connectionState) {
@@ -68,17 +66,17 @@ class PopularMoviesWidgetState extends State<PopularMoviesWidget> {
                     if (response.hasError)
                       return new Text("Error: ${response.error}");
                     else {
-                      movies = jsonDecode(response.data[1])['results']
+                      LoadedContent.popularMovies = jsonDecode(response.data[1])['results']
                           .map<Movie>((movie) => new Movie(movie))
                           .toList();
-                      watched = response.data[0];
-                      toWatch = response.data[2];
-                      return new GridMovieScreen(movies, controller);
+                      LoadedContent.watchedMovies = response.data[0];
+                      LoadedContent.toWatchMovies = response.data[2];
+                      return new GridMovieScreen(LoadedContent.popularMovies, controller);
                     }
                 }
               },
               future: initializeContent())
-          : new GridMovieScreen(movies, controller),
+          : new GridMovieScreen(LoadedContent.popularMovies, controller),
     );
   }
 

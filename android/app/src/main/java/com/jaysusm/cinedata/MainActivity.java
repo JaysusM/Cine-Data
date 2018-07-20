@@ -1,4 +1,4 @@
-package com.example.cinedata;
+package com.jaysusm.cinedata;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

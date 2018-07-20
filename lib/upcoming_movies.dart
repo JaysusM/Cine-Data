@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'searcher.dart';
 import 'dart:convert';
 import 'movie.dart';
-import 'movie_box.dart';
-import 'popular_movies.dart';
+import 'loaded_content.dart';
 import 'grid_movie_screen.dart';
 
 class UpcomingMoviesWidget extends StatefulWidget {
@@ -13,7 +12,6 @@ class UpcomingMoviesWidget extends StatefulWidget {
 
 class UpcomingMoviesState extends State {
   Searcher searcher = new Searcher();
-  List<Movie> movies;
   ScrollController controller = new ScrollController();
   int pageCounter = 1;
   bool isLoadingContent = false;
@@ -36,7 +34,7 @@ class UpcomingMoviesState extends State {
           loadingContent.forEach((movie) => GridMovieScreen.checkWatchlist(movie));
         }).whenComplete(() {
           this.setState(() {
-            movies.addAll(loadingContent);
+            LoadedContent.upcomingMovies.addAll(loadingContent);
             controller.jumpTo(offset);
           });
         });
@@ -44,7 +42,7 @@ class UpcomingMoviesState extends State {
     });
 
     return new Container(
-      child: (movies == null)
+      child: (LoadedContent.upcomingMovies == null)
           ? new FutureBuilder(
           builder: (BuildContext context, AsyncSnapshot response) {
             switch (response.connectionState) {
@@ -67,16 +65,16 @@ class UpcomingMoviesState extends State {
                 if (response.hasError)
                   return new Text("Error: ${response.error}");
                 else {
-                  movies = jsonDecode(response.data)['results']
+                  LoadedContent.upcomingMovies = jsonDecode(response.data)['results']
                       .map<Movie>((movie) => new Movie(movie))
                       .toList();
-                  movies.forEach((movie) => GridMovieScreen.checkWatchlist(movie));
-                  return new GridMovieScreen(movies, controller);
+                  LoadedContent.upcomingMovies.forEach((movie) => GridMovieScreen.checkWatchlist(movie));
+                  return new GridMovieScreen(LoadedContent.upcomingMovies, controller);
                 }
             }
           },
           future: searcher.searchUpcoming())
-          : new GridMovieScreen(movies, controller),
+          : new GridMovieScreen(LoadedContent.upcomingMovies, controller),
     );
   }
 

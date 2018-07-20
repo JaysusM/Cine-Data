@@ -3,7 +3,7 @@ import 'movie.dart';
 import 'searcher.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'popular_movies.dart';
+import 'loaded_content.dart';
 import 'watchlist_manager.dart';
 
 class InfoPage extends StatefulWidget {
@@ -222,11 +222,11 @@ class InfoPageState extends State<InfoPage> {
 
   Widget _buildPage() {
 
-    if(PopularMoviesWidgetState.watched.any((movie) => movie.id == fullMovie.id)) {
+    if(LoadedContent.watchedMovies.any((movie) => movie.id == fullMovie.id)) {
       fullMovie.setWatched(true);
       color = Colors.green;
       icon = Icons.check_circle;
-    } else if (PopularMoviesWidgetState.toWatch.any((movie) => movie.id == fullMovie.id)) {
+    } else if (LoadedContent.toWatchMovies.any((movie) => movie.id == fullMovie.id)) {
       fullMovie.setToWatch(true);
       color = Colors.blue;
       icon = Icons.remove_red_eye;
@@ -370,7 +370,7 @@ class InfoPageState extends State<InfoPage> {
 
       Watchlist.dropWatchedMovie(fullMovie.id);
       fullMovie.setToWatch(false);
-      PopularMoviesWidgetState.watched.removeWhere((movie) => movie.id == fullMovie.id);
+      LoadedContent.watchedMovies.removeWhere((movie) => movie.id == fullMovie.id);
 
     } else if(fullMovie.toWatch()) {
       fullMovie.setToWatch(false);
@@ -379,10 +379,10 @@ class InfoPageState extends State<InfoPage> {
       icon = Icons.check_circle;
 
       Watchlist.dropToWatchMovie(fullMovie.id);
-      PopularMoviesWidgetState.toWatch.removeWhere((movie) => movie.id == fullMovie.id);
+      LoadedContent.toWatchMovies.removeWhere((movie) => movie.id == fullMovie.id);
 
       Watchlist.addWatchedMovie(new Movie.elemental(fullMovie.id, fullMovie.title, fullMovie.vote_average, fullMovie.poster_path));
-      PopularMoviesWidgetState.watched.add(new Movie.elemental(fullMovie.id, fullMovie.title, fullMovie.vote_average, fullMovie.poster_path));
+      LoadedContent.watchedMovies.add(new Movie.elemental(fullMovie.id, fullMovie.title, fullMovie.vote_average, fullMovie.poster_path));
 
     } else {
       fullMovie.setToWatch(true);
@@ -390,7 +390,7 @@ class InfoPageState extends State<InfoPage> {
       icon = Icons.clear;
 
       Watchlist.addToWatchMovie(new Movie.elemental(fullMovie.id, fullMovie.title, fullMovie.vote_average, fullMovie.poster_path));
-      PopularMoviesWidgetState.toWatch.add(new Movie.elemental(fullMovie.id, fullMovie.title, fullMovie.vote_average, fullMovie.poster_path));
+      LoadedContent.toWatchMovies.add(new Movie.elemental(fullMovie.id, fullMovie.title, fullMovie.vote_average, fullMovie.poster_path));
     }
   }
   
