@@ -5,8 +5,8 @@ import 'loaded_content.dart';
 
 class GridMovieScreen extends StatelessWidget {
 
-  List<Movie> movies;
-  ScrollController controller;
+  final List<Movie> movies;
+  final ScrollController controller;
 
   GridMovieScreen(this.movies, this.controller);
 
@@ -25,7 +25,7 @@ class GridMovieScreen extends StatelessWidget {
   }
 
   static Movie checkWatchlist(Movie movie) {
-    if (LoadedContent.toWatchMovies.any((x) => x.id == movie.id)) {
+    if (LoadedContent.watchedMovies.any((x) => x.id == movie.id)) {
       movie.setWatched(true);
       movie.setToWatch(false);
     } else if (LoadedContent.toWatchMovies.any((x) => x.id == movie.id)) {

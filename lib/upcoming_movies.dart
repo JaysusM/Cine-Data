@@ -51,7 +51,7 @@ class UpcomingMoviesState extends State {
                     child: new Column(
                       children: <Widget>[
                         new Text("Awaiting results...",
-                            style: new TextStyle(fontSize: 17.0)),
+                            style: new TextStyle(fontSize: 17.0, fontFamily: 'Muli')),
                         new Image(image: new AssetImage("assets/loading.gif")),
                       ],
                       crossAxisAlignment: CrossAxisAlignment.center,

@@ -5,7 +5,7 @@ import 'watchlist_manager.dart';
 import 'loaded_content.dart';
 
 class MovieBox extends StatefulWidget {
-  Movie movie;
+  final Movie movie;
 
   MovieBox(this.movie);
 
@@ -18,13 +18,11 @@ class MovieBoxState extends State<MovieBox> {
   Widget build(BuildContext context) {
     return new GestureDetector(
       child: new GridTile(
-        child: new Hero(
-            tag: widget.movie.id,
             child: new FadeInImage(
               fit: BoxFit.cover,
               placeholder: new AssetImage("assets/loadingCircle.gif"),
               image: new NetworkImage(widget.movie.getPosterUrl()),
-            )),
+            ),
         footer: new GridTileBar(
           leading: (widget.movie.watched()) ? new Icon(Icons.check_circle, color: Colors.green) : (!widget.movie.toWatch()) ? new Container() : new Icon(Icons.remove_red_eye, color: Colors.white),
           title: new Text(widget.movie.title, style: new TextStyle(fontFamily: 'Muli')),

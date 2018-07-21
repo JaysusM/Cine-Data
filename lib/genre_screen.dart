@@ -3,7 +3,6 @@ import 'searcher.dart';
 import 'movie.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'dictionary.dart';
 import 'grid_movie_screen.dart';
 import 'loaded_content.dart';
 
@@ -80,7 +79,7 @@ class GenreScreenState extends State {
                         child: new Column(
                           children: <Widget>[
                             new Text("Awaiting results...",
-                                style: new TextStyle(fontSize: 17.0)),
+                                style: new TextStyle(fontSize: 17.0, fontFamily: 'Muli')),
                             new Image(image: new AssetImage("assets/loading.gif")),
                           ],
                           crossAxisAlignment: CrossAxisAlignment.center,

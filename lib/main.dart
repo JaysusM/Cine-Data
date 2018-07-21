@@ -26,17 +26,17 @@ class MyApp extends StatelessWidget {
         "/watched": (BuildContext context) => new WatchlistScreen(true),
         "/toWatch": (BuildContext context) => new WatchlistScreen(false),
         "/genres": (BuildContext context) =>
-            ScaffoldContainer(new GenreScreen(), "Genres"),
+            scaffoldContainer(new GenreScreen(), "Genres"),
         "/popular": (BuildContext context) =>
-            ScaffoldContainer(new PopularMoviesWidget(), "Popular Movies"),
+            scaffoldContainer(new PopularMoviesWidget(), "Popular Movies"),
         "/upcoming": (BuildContext context) =>
-            ScaffoldContainer(new UpcomingMoviesWidget(), "Upcoming Movies")
+            scaffoldContainer(new UpcomingMoviesWidget(), "Upcoming Movies")
       },
       home: new MainScreen(),
     );
   }
 
-  Widget ScaffoldContainer(Widget body, String title) {
+  Widget scaffoldContainer(Widget body, String title) {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(title,
@@ -62,6 +62,13 @@ class MainScreenState extends State with SingleTickerProviderStateMixin {
     genreScreen = new GenreScreen();
     upcomingMovies = new UpcomingMoviesWidget();
     tabController = new TabController(length: 3, vsync: this)..index = 1;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => (Watchlist.firstUseDB) ? howToUseDialog() : null);
   }
 
   Widget build(BuildContext context) {

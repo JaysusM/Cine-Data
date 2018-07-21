@@ -2,6 +2,9 @@
 
 Cine-Data is an android app movie tracker that was made with flutter and uses TMDB Api.
 
+#### Availabe download clicking in the logo
+<a href="https://github.com/JaysusM/Cine-Data/releases/download/v1.0.1/CineData.apk"><img src="./screenshots/cinedata.png" height="250" alt="download logo"/></a>
+
 # Screenshots
 
 | Home Screen | Info Page |
@@ -19,3 +22,4 @@ Cine-Data is an android app movie tracker that was made with flutter and uses TM
 | Genres list Screen | Genre Screen |
 | ------------------ | ------------------ |
 | <img src="./screenshots/genres.png" height="400" alt="genres"/>  | <img src="./screenshots/genre page.png" height="400" alt="genre page"/>  |
+

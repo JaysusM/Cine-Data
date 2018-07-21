@@ -7,7 +7,7 @@ import 'loaded_content.dart';
 import 'watchlist_manager.dart';
 
 class InfoPage extends StatefulWidget {
-  Movie movie;
+  final Movie movie;
 
   InfoPage(this.movie);
 
@@ -61,8 +61,6 @@ class InfoPageState extends State<InfoPage> {
                   : _buildPage(),
               new GestureDetector(
                 child: new Container(
-                  child: new Hero(
-                      tag: widget.movie.id,
                       child: new Material(
                         child: new FadeInImage(
                           fit: BoxFit.fitHeight,
@@ -72,7 +70,7 @@ class InfoPageState extends State<InfoPage> {
                         ),
                         borderRadius: new BorderRadius.circular(13.0),
                         elevation: 7.0,
-                      )),
+                      ),
                   height: MediaQuery.of(context).size.height * 0.3,
                   margin: new EdgeInsets.only(left: 15.0, top: 60.0),
                 ),
